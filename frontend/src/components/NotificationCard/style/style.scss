@@ -1,0 +1,9 @@
+@import '../../../styles-base/variables';
+
+.notification-card-read {
+  border: 1px solid $border-color-default;
+}
+
+.notification-card-unread {
+  border: 1px solid $border-color-blue !important;
+}

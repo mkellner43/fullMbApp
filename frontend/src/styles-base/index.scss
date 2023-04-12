@@ -1,0 +1,82 @@
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+@import './mixins';
+
+
+.center-modal {
+  @include center-modal;
+ }
+
+ .center {
+  @include center;
+ }
+
+ .post-avatar {
+  @include center;
+  width: 65%;
+  flex-direction: row;
+  justify-content: flex-start;
+  overflow: 'hidden';
+}
+
+.flex1 {
+  flex: 1
+}
+
+.small-card {
+  @include center;
+  border: $default-border;
+  border-radius: 15px;
+  flex-direction: row;
+  padding: 0.5rem;
+  margin: 0.5rem 0rem;
+  width: 100%;
+  max-width: 450px;
+  justify-content: space-between;
+}
+
+.text-ellipsis-flex {
+  font-size: 1rem;
+  padding: 0rem; 
+  margin: 0px; 
+  font-weight: 400; 
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.pl1 {
+  padding-left: 0.2rem;
+}
+
+.m1 {
+  margin: 1rem;
+}
+
+.container {
+  width: 100%;
+  padding: 0rem 1rem;
+  margin-bottom: 4rem;
+}
+
+.page-width {
+  width: 100%;
+  max-width: 800px;
+  min-width: 300px;
+}
+
+.page-width-form {
+  width: 100%;
+  max-width: 300px;
+  min-width: 200px;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.column {
+  flex-direction: column;
+}

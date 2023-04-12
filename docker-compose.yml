@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - 3001:3001
+    environment:
+      - PORT=3001
+  backend:
+    ports:
+      - 3000:3000
+    build: ./backend
+  socket:
+    ports:
+      - 8900:8900
+    build: ./socket
+volumes:
+  mattbook: 

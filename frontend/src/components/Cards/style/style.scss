@@ -1,0 +1,46 @@
+@import '../../../styles-base/variables';
+@import '../../../styles-base/mixins';
+
+.post-card {
+  @include nice-border;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .post-heading {
+    @include center;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .post-date {
+      @include center;
+      flex-direction: row;
+    }
+  }
+  
+  .post-content {
+    display: flex;
+    flex-direction: column; 
+       
+    .post-text {
+      width: 80%;
+      padding: 1rem;
+    }
+
+    .post-image {
+      width: 100%;
+      align-self: center;
+      border-radius: 15px;
+    }
+    .post-actions {
+      @include center;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 1rem;
+      margin-left: 1rem;
+      width: 100%;
+    }
+  }
+}

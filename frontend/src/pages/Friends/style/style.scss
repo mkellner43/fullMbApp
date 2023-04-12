@@ -1,0 +1,30 @@
+@import '../../../styles-base/mixins';
+@import '../../../styles-base/variables';
+
+.friend-container {
+  @include center;
+  justify-content: space-evenly;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  height: 80vh;
+
+
+  .friend-section{ 
+    @include center;
+    width: 30vw;
+    min-width: 350px;
+    max-width: 450px;
+    justify-content: flex-start;
+    flex: 1;
+
+    .scroll {
+      width: 90%;
+      overflow: scroll;
+    }
+  }
+
+  .row {
+    flex-direction: row;
+  }
+}

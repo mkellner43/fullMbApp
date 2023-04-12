@@ -1,0 +1,29 @@
+@import './variables';
+
+@mixin center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin center-modal {
+  @include center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  border: 2px solid rgba(64, 64, 64, 0.84);
+  background-color: inherit;
+  background-color: var(--background);
+  color: var(--modal-text);
+  padding: 2rem;
+  border-radius: 15px;
+  z-index: 1002;
+}
+
+@mixin nice-border {
+ border: $default-border;
+ border-radius: 15px;
+}

@@ -1,0 +1,26 @@
+@import '../../../styles-base/variables';
+@import '../../../styles-base/mixins';
+
+.notification-container {
+  width: 100%;
+  @include center;
+  justify-content: flex-start;
+  height: 80vh;
+
+  .notification-buttons {
+    display: flex;
+    width: 250px;
+    justify-content: space-between;
+    margin: 1rem;
+  }
+
+  .notification-section {
+    @include center;
+    justify-content: flex-start;
+    height: 80%;
+    overflow: scroll;
+    width: 30%;
+    min-width: 300px;
+    max-width: 450px;
+  }
+}

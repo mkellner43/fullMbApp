@@ -1,0 +1,14 @@
+.currentUserMessage {
+  align-self: flex-end;
+}
+
+.friendMessage {
+  align-self: flex-start;
+}
+
+.circleLoaderContainer { 
+  position: absolute;
+  top: 50%;
+  text-align: center;
+  width: 100%;
+}

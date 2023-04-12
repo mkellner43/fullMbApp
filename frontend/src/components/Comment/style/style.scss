@@ -1,0 +1,20 @@
+@import '../../../styles-base/mixins';
+
+.comment {
+  margin: 1rem;
+
+  .comment-content {
+    padding: 1rem;
+  }
+
+  .left {
+    justify-content: flex-start;
+  }
+
+  .time-comment {
+    @include center;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 2rem;
+  }
+}

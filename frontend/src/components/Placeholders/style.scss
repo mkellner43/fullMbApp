@@ -1,0 +1,39 @@
+@import '/src/styles-base/mixins';
+
+.mt3 {
+  margin-top: 3rem;
+}
+
+.p1 {
+  padding: 2rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.left {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.right {
+  @extend .left;
+  justify-content: flex-end;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.nice-border {
+  @include nice-border;
+}
+
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

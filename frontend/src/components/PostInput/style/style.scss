@@ -1,0 +1,30 @@
+@import '/src/styles-base/mixins';
+@import '/src/styles-base/variables';
+
+.post-input {
+  @include center;
+  width: 100%;
+
+  .image-preview {
+    @include nice-border;
+    @include center;
+    padding: 1rem 1rem 2rem 1rem;
+    margin: 1rem 0rem;
+
+    #preview {
+      width: 60%;
+      border-radius: 15px;
+    }
+  }
+
+  .none {
+    display: none;
+  }
+
+  .post-buttons {
+    display: flex;
+    width: 100%;
+    margin-top: 0.5rem;
+    margin-bottom: 3rem;
+  }
+}
