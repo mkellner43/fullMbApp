@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 //socket io 
 const io = require('socket.io')(process.env.SOCKET_PORT, {
