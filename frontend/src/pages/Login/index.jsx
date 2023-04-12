@@ -20,6 +20,7 @@ const Login = () => {
     mutationFn: ({credentials, navigate}) => 
     login(credentials, navigate),
     onSuccess: (data) => {
+      console.log('success??')
       dispatch(setCurrentUser(data))
       dispatch(setToken(data.token))
       dispatch(updateUsername(''))
@@ -29,6 +30,7 @@ const Login = () => {
       dispatch(setPasswordError(null))
       dispatch(setMainError(null))
     },
+    retry: false,
     onError: (err) => {
       dispatch(setMainError(err))
     }

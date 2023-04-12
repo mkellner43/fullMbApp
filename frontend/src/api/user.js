@@ -7,7 +7,8 @@ export const login = async(credentials, navigate) => {
     navigate('/')
     return data
   } catch (error) {
-    return error
+    if(error.response.status === 401) return Promise.reject('Invalid username or password.')
+    return Promise.reject(error.message)
   }
 }
 
