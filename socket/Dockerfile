@@ -2,7 +2,7 @@
 
 FROM node:19-alpine
 
-ENV NODE_ENV=dev
+ENV NODE_ENV=production
 
 WORKDIR /app
 
@@ -12,4 +12,4 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", 'dev']
