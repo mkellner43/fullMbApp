@@ -47,7 +47,6 @@ const App = () => {
     </ThemeProvider>
   )
 
-  
   return (
     <SocketProvider value={currentUser?.id}>
       <ThemeProvider theme={darkTheme}>
@@ -73,10 +72,8 @@ export default App;
 // Redis?
 // mongoDB image storage / using multer to store static files on your own server - used cloudinary -- could look into other options outside of 3rd party
 
-
 // prod is a pain in my dick
-// ready to get up and running for production to show off to sharecare, learn about docker and how to deploy ****
 // get docker working for prod
-// socket io seems to have issues with logout and online status indictors
-
 // get working in prod env -- then get working in AWS or another free service? Maybe GCP? 
+
+//add fake data and filter what user can see by friends and set defaults

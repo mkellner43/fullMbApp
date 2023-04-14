@@ -7,6 +7,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+let users = [];
 
 //socket io 
 const io = require('socket.io')(process.env.SOCKET_PORT, {
@@ -31,13 +32,17 @@ io.on('connection', async (socket) => {
   socket.on('notification', ({to_id, type, msg}) => {
     socket.to(to_id).emit('notification', msg)
   })
-  let users = [];
+
   for (let [id, socket] of io.of("/").sockets) {
     users.push(socket.handshake.auth.userID);
   }
   users = users.filter((value, index, array) => array.indexOf(value) === index)
 
   io.emit('onlineFriends', users)
+
+  socket.on('onlineFriends', () => {
+    socket.emit(users)
+  })
 
   socket.on('logOut', (id) => {
     users = users.filter(user => user !== id)
@@ -52,9 +57,10 @@ io.on('connection', async (socket) => {
     io.emit('onlineFriends', users)
   })
 
-  socket.on('disconnect', () => {
-    const online = users.filter(user => user !== socket.handshake.auth.userID)
-    io.emit('onlineFriends', online) })
+  socket.on('disconnecting', () => {
+    users = users.filter(user => user !== socket.handshake.auth.userID)
+    io.emit('onlineFriends', users) 
+  })
 })
 
 const app = express();
@@ -68,3 +74,8 @@ app.use(cookieParser());
 app.listen(process.env.PORT || 3000, () => {
   console.log(`listening on ${process.env.PORT || 3000}`)
 })
+
+
+// figure out how to properly emit and collect online users when connected / disconnected from socket
+// may need to set state rather than in cache 
+// already setOnlineFriends state in Nav store (: Give it a shot

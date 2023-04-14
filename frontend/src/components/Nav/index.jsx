@@ -15,6 +15,7 @@ import useNotificationQuery from '../hooks/useNotificationQuery';
 import AppBar from '@mui/material/AppBar';
 import { motion } from 'framer-motion';
 import { setTheme } from './features/navSlice';
+import { setOnlineFriends } from './features/navSlice';
 
 export const Nav = ({currentUser}) => {
   const dispatch = useDispatch();
@@ -50,14 +51,13 @@ export const Nav = ({currentUser}) => {
     })
     socket?.emit('onlineFriends')
     socket?.on('onlineFriends', (data) => {
-      queryClient.setQueryDefaults(['onlineFriends'], {cacheTime: Infinity})
-      queryClient.setQueryData(['onlineFriends'], data)
+      dispatch(setOnlineFriends(data))
     })
     return () => {
       socket?.off('notification')
       socket?.off('onlineFriends')
     };
-  }, [socket, queryClient])
+  }, [socket, queryClient, dispatch])
 
   useEffect(() => {
     switcher === 'dark' ? localStorage.setItem('theme', 'dark') : localStorage.setItem('theme', 'light')

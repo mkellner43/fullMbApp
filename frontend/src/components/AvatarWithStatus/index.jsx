@@ -1,29 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Avatar } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSocket } from '../../context/SocketProvider';
 import { StyledOnlineBadge, StyledOfflineBadge } from './themes/style';
+import { useSelector } from 'react-redux';
 
 export const AvatarWithStatus = ({user, width='3rem', height='3rem'}) => {
-  const queryClient = useQueryClient();
-  const socket = useSocket();
   const userID = user?.id || user?._id
-  // eslint-disable-next-line no-unused-vars
-  const [statusChange, setStatusChange] = useState(false)
-  
-  useEffect(() => {
-    socket?.emit('onlineFriends')
-    socket?.on('onlineFriends', (data) => {
-      queryClient.setQueryDefaults(['onlineFriends'], {cacheTime: Infinity})
-      queryClient.setQueryData(['onlineFriends'], data)
-      setStatusChange(prev => !prev)
-    })
-    return () => {
-      socket?.off('onlineFriends')
-    };
-  }, [socket, queryClient])
+  const onlineFriends = useSelector(state => state.nav.onlineFriends)
 
-  return queryClient.getQueryData(['onlineFriends'])?.includes(userID) ? 
+  return onlineFriends?.includes(userID) ? 
     <StyledOnlineBadge
       overlap="circular"
       anchorOrigin={{ 
@@ -51,7 +34,7 @@ export const AvatarWithStatus = ({user, width='3rem', height='3rem'}) => {
       variant="dot"
     >
       <Avatar 
-        src={user?.avatar?.image}
+        src={user?.avatar?.url}
         sx={{width: width,
           height: height}}
         >
