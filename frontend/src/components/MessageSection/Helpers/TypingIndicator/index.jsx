@@ -10,7 +10,7 @@ const TypingIndicator = ({scrollPosition}) => {
 
   useLayoutEffect(() => {
     if((scrollPosition.current?.scrollHeight - scrollPosition.current?.scrollTop) <= scrollPosition.current?.clientHeight + (scrollPosition.current?.clientHeight * .1) || (!typing && (scrollPosition.current?.scrollHeight - scrollPosition.current?.scrollTop) <= scrollPosition.current?.clientHeight - (scrollPosition.current?.clientHeight * .1)))typingBubble.current?.scrollIntoView({behavior: 'smooth', block: "end"})
-  }, [typing, typingBubble])
+  }, [typing, typingBubble, scrollPosition])
 
   return <AnimatePresence>
   {typing &&
