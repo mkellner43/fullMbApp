@@ -18,11 +18,10 @@ import './style/style.scss';
 const MessageSection = () => {
   const friend = useSelector(state => state.messages.friend)
   const currentUser = useSelector(state => state.login.currentUser)
-  const typing = useSelector(state => state.messages.typing)
   const queryClient = useQueryClient()
   const scroll = useRef(null)
+  const typing = useSelector(state => state.messages.typing)
   const lastMessage = useRef(null)
-  const typingBubble = useRef(null)
   const scrollPosition = useRef(null)
   const socket = useSocket()
   const dispatch = useDispatch()
@@ -37,7 +36,7 @@ const MessageSection = () => {
   }, [thread.data?.pages])
 
   useLayoutEffect(() => {
-    typingBubble.current?.scrollIntoView({behavior: 'smooth', block: "end"})
+    if((!typing && (scrollPosition.current.scrollHeight - scrollPosition.current.scrollTop) <= scrollPosition.current.clientHeight + (scrollPosition.current.clientHeight * .1)) || (!typing && (scrollPosition.current.scrollHeight - scrollPosition.current.scrollTop) <= scrollPosition.current.clientHeight - (scrollPosition.current.clientHeight * .1))) scroll.current?.scrollIntoView({behavior: 'smooth', block: "end"})
   }, [typing])
 
   useEffect(() => {
@@ -57,6 +56,10 @@ const MessageSection = () => {
   }, [socket, queryClient, dispatch])
   
   const handleScroll = () => {
+    console.log('height',scrollPosition.current.scrollHeight)
+    console.log('client',scrollPosition.current.clientHeight)
+    console.log('top', scrollPosition.current.scrollTop)
+    console.log('answer?', (scrollPosition.current.scrollHeight - scrollPosition.current.scrollTop) <= scrollPosition.current.clientHeight + (scrollPosition.current.clientHeight * .1) || (scrollPosition.current.scrollHeight - scrollPosition.current.scrollTop) <= scrollPosition.current.clientHeight - (scrollPosition.current.clientHeight * .1) )
     if(scrollPosition.current.scrollHeight !== scrollPosition.current.clientHeight &&
       scrollPosition.current.scrollTop === 0 && thread.hasNextPage) {
         thread.fetchNextPage();
@@ -105,7 +108,7 @@ const MessageSection = () => {
             <Typography sx={{position: 'absolute', top: '50%', textAlign: 'center', width: 1}}>
               No Messages Yet
             </Typography> }
-            <TypingIndicator scroll={typingBubble} typing={typing} />
+            <TypingIndicator scrollPosition={scrollPosition}/>
           </motion.div>
         </AnimatePresence>
         <MessageForm scroll={scroll} />

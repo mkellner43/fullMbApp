@@ -62,7 +62,6 @@ const bodyParser = require('body-parser');
 //     io.emit('onlineFriends', online) })
 // })
 
-
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const commentRouter = require('./routes/comment');
