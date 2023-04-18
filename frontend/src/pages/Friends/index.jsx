@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import { getFriends, getPendingRequests, getSuggestions, sendFriendRequest, acceptFriend, declineFriend } from '../../api/friends';
+import { sendFriendRequest, acceptFriend, declineFriend } from '../../api/friends';
 import {Typography} from '@mui/material';
 import { useSocket } from '../../context/SocketProvider';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import DeleteFriend from '../../components/Modals/SimpleTextAnswer';
 import MapFriends from '../../components/FriendsContainer';
 import FriendsPending from '../../components/FriendsPending';
@@ -10,6 +10,7 @@ import FriendSuggestions from '../../components/FriendSuggestions';
 import FriendPlaceholder from '../../components/Placeholders/FriendPlaceholder';
 import { setToken } from '../Login/features/loginSlice';
 import { useDispatch } from 'react-redux';
+import { useFriendQuery, usePendingQuery, useSuggestionQuery } from '../../components/hooks/useFriendQuery';
 import './style/style.scss';
 
 const Friends = ({currentUser}) => {
@@ -17,45 +18,72 @@ const Friends = ({currentUser}) => {
   const socket = useSocket();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState()
+  const [confirmDelete, setConfirmDelete] = useState();
+  const friendQuery = useFriendQuery();
+  const pendingQuery = usePendingQuery();
+  const suggestionsQuery = useSuggestionQuery();
 
-  const friendQuery = useQuery({
-    queryKey: ['friends'], 
-    queryFn: () => getFriends()})
-  const pendingQuery = useQuery({
-    queryKey: ['pending'], queryFn: () => getPendingRequests()})
-  const suggestionsQuery = useQuery({queryKey: ['suggestions'], queryFn: () => getSuggestions()})
+  // NEED TO RESTRUCTURE OPTOMISM
+  // get infinite scroll and search to work here (: 
 
   const declineQuery = useMutation({
     mutationFn: ({request_id}) =>
       declineFriend(request_id),
+      // console.log('delete'),
     onMutate: async(variables) => {
       await queryClient.cancelQueries({queryKey: ['friends']})
       await queryClient.cancelQueries({queryKey: ['pending']})
       await queryClient.cancelQueries({queryKey: ['suggestions']})
-      
-      const prevFriends = queryClient.getQueryData(['friends'])
-      const prevPending = queryClient.getQueryData(['pending'])
-      const prevSuggestions = queryClient.getQueryData(['suggestions'])
+      const oldSuggestions = queryClient.getQueryData(['suggestions'])
+      const oldFriends = queryClient.getQueryData(['friends'])
+      const oldPending = queryClient.getQueryData(['pending'])
 
-      const [person] = queryClient.getQueryData(['friends']).filter(request => request.request_id === variables.request_id)
-      const [personPending] = queryClient.getQueryData(['pending']).filter(request => request.request_id === variables.request_id)
+      const [pendingFriend] = queryClient.getQueryData(['pending']).pages.map( page => page.pending?.find( request => request.request_id === variables.request_id))
+      const [oldFriend] = queryClient.getQueryData(['friends']).pages.map( page => page.friends?.find( request => request.request_id === variables.request_id))
 
-      queryClient.setQueryData(['suggestions'], (old) => [...old, person ? person.user : personPending.user])
-      queryClient.setQueryData(['friends'], (old) => {
-        const newFriends = old.filter(request => request.request_id !== variables.request_id)
-        return newFriends
-      })
       queryClient.setQueryData(['pending'], (old) => {
-        const newPending = old.filter(request => request.request_id !== variables.request_id)
-        return newPending
+        const newPages = old.pages.map( page => {
+          return {
+            ...page,
+            pending: page.pending?.filter( request => request.request_id !== variables.request_id)
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
       })
-      return {prevFriends, prevPending, prevSuggestions}
+      queryClient.setQueryData(['friends'], (old) => { 
+        const newPages = old.pages.map( page => {
+          return {
+            ...page,
+            friends: page.friends?.filter( request => request.request_id !== variables.request_id)
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+      queryClient.setQueryData(['suggestions'], (old) => { 
+        const newPages = old.pages.map( page => {
+          const friend = pendingFriend || oldFriend
+          return {
+            ...page,
+            suggestions: page.suggestions?.length > 0 ? [...page.suggestions, friend.user] : [friend.user]
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+      return {oldPending, oldFriends, oldSuggestions}
     },
-    onError: (err, request, context) => {
-      queryClient.setQueryData(['friends'], context.prevFriends)
-      queryClient.setQueryData(['pending'], context.prevPending)
-      queryClient.setQueryData(['suggestions'], context.prevSuggestions)
+    onError: (_err, _request, context) => {
+      queryClient.setQueryData(['friends'], context.oldPending)
+      queryClient.setQueryData(['pending'], context.oldFriends)
+      queryClient.setQueryData(['suggestions'], context.oldSuggestions)
       // dispatch(setToken())
     },
     onSettled: () => {
@@ -70,14 +98,40 @@ const Friends = ({currentUser}) => {
   const acceptQuery = useMutation({
     mutationFn: ({request_id}) => 
       acceptFriend(request_id),
+      // console.log('accept'),
     onMutate: async(variables) => {
       await queryClient.cancelQueries(['pending'])
       await queryClient.cancelQueries(['friends'])
       const oldFriends = queryClient.getQueryData(['friends'])
       const oldPending = queryClient.getQueryData(['pending'])
-      const [newFriend] = queryClient.getQueryData(['pending']).filter(request => request.request_id === variables.request_id)
-      queryClient.setQueryData(['pending'], (old) => old.filter(request => request.request_id !== variables.request_id))
-      queryClient.setQueryData(['friends'], (old) => [...old, newFriend])
+      const [newFriend] = queryClient.getQueryData(['pending']).pages.map( page => page.pending.find( request => request.request_id === variables.request_id))
+      queryClient.setQueryData(['pending'], (old) => { 
+        const newPages = old.pages.map( page => {
+          return page.pending?.length > 0 ?
+           {
+            ...page,
+            pending: page.pending?.filter( request => request.request_id !== variables.request_id)
+          }
+          :
+          page
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+      queryClient.setQueryData(['friends'], (old) => { 
+        const newPages = old.pages.map( page => {
+          return {
+            ...page,
+            friends: page.friends?.length > 0 ? [...page.friends, newFriend] : [newFriend]
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
       return {oldPending, oldFriends}
     },
     onSuccess: (variables) => {
@@ -98,25 +152,44 @@ const Friends = ({currentUser}) => {
   const sendRequestQuery = useMutation({
     mutationFn: ({friend, currentUser}) =>
       sendFriendRequest(friend, currentUser),
+      // console.log('sent'),
     onMutate: async(variables) => {
       await queryClient.cancelQueries(['pending'])
       await queryClient.cancelQueries(['suggestions'])
-
       const prevPending = queryClient.getQueryData(['pending'])
       const prevSuggestions = queryClient.getQueryData(['suggestions'])
-
-      const [sentTo] = queryClient.getQueryData(['suggestions']).filter(user => user._id === variables.friend)
-      console.log(sentTo)
-      queryClient.setQueryData(['suggestions'], (old) => old.filter(user => user._id !== variables.friend))
-      queryClient.setQueryData(['pending'], (old) => [...old, {user: sentTo, type: 'requester'}])
-
+      const [sentTo] = queryClient.getQueryData(['suggestions']).pages.map( page => page.suggestions.filter( friend => friend._id === variables.friend))
+      queryClient.setQueryData(['suggestions'], (old) => { 
+        const newPages = old.pages.map( page => {
+          return {
+            ...page,
+            suggestions: page.suggestions.filter( friend => friend._id !== variables.friend)
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+      queryClient.setQueryData(['pending'], (old) => { 
+        const newPages = old.pages.map( page => {
+          return {
+            ...page,
+            pending: page.pending?.length > 0 ? [...page.pending, {request_id: Math.random(),user: sentTo[0], type: 'requester'}] : [{request_id: Math.random(), user: sentTo[0], type: 'requester'}]
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
       return {prevPending, prevSuggestions}
-
     },
-    onSuccess: (variables) => {
-      socket?.emit('notification', {to_id: variables.user._id, type: 'Friend Request', msg: `${currentUser.username} sent you a friend request!`})
+    onSuccess: (data, variables, context) => {
+      console.log(data, variables, context)
+      socket?.emit('notification', {to_id: variables._id, type: 'Friend Request', msg: `${currentUser.username} sent you a friend request!`})
     },
-    onError: (err, request, context) => {
+    onError: (_err, _request, context) => {
       queryClient.setQueryData(['pending'], context.prevPending)
       queryClient.setQueryData(['suggestions'], context.prevSuggestions)
       dispatch(setToken())

@@ -1,17 +1,17 @@
 import axios from "axios";
 
-export const getFriends = async() => {
+export const getFriends = async(pageParam) => {
   try{
-     const { data } = await axios.get('friend_requests/friends')
+     const { data } = await axios.get(`friend_requests/friends?page=${pageParam}`)
      return data
   } catch (error) {
     return error
   }
 }
 
-export const getSuggestions = async() => {
+export const getSuggestions = async(pageParam) => {
   try {
-    const { data } = await axios.get('friend_requests/suggestions')
+    const { data } = await axios.get(`friend_requests/suggestions?page=${pageParam}`)
     return data
   } catch (error) {
     return error
@@ -19,9 +19,9 @@ export const getSuggestions = async() => {
 }
 
 
-export const getPendingRequests = async() => {
+export const getPendingRequests = async(pageParam) => {
   try {
-    const { data } = await axios.get('friend_requests/pending')
+    const { data } = await axios.get(`friend_requests/pending?page=${pageParam}`)
     return data
   } catch (error) {
     return error

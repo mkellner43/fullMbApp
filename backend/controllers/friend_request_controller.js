@@ -63,41 +63,34 @@ exports.delete = async(req, res, next) => {
   } catch (error) {
     next(error)
   }
-  
-  
-  // User.updateMany({}, { $pull: { friend_requests: req.params.id}}).exec()
-  // .then(result => {
-  //   console.log(result)
-  //   FriendRequest.deleteOne({_id: req.params.id}).exec()
-  //   .then((result) => {
-  //     result.deleteOne()
-  //   })
-  //   .then(data => {
-  //     console.log(result, data)
-  //     return res.send({result, data})
-  //   })
-  // })
-  // .catch(next)
 }
 
 exports.show_friends = async (req, res, next) => {
   try {
-    const requests = await FriendRequest.find({$or: [{requester: req.user.user_id, status: 'accepted'}, {receiver: req.user.user_id, status: 'accepted'}]})
-    .populate('requester', 'username first_name last_name avatar')
-    .populate('receiver', 'username first_name last_name avatar')
-    .sort({date: -1})
+    const [requests, count] = await Promise.all([
+      FriendRequest.find({$or: [
+        {requester: req.user.user_id, status: 'accepted'},
+        {receiver: req.user.user_id, status: 'accepted'}
+      ]})
+      .populate('requester', 'username first_name last_name avatar')
+      .populate('receiver', 'username first_name last_name avatar')
+      .sort({date: -1})
+      .skip(req.query.page)
+      .limit(10),
+      FriendRequest.find({$or: [{requester: req.user.user_id, status: 'accepted'}, {receiver: req.user.user_id, status: 'accepted'}]}).count()
+    ])
+    const friends = []
     if(requests.length > 0){
-      const friends = []
        await Promise.all(requests.map(async(request) => {
         if(request.receiver.id === req.user.user_id) {
-          await request.requester.populate('avatar')
           friends.push({request_id: request.id, user: request.requester})
         } else {
-          await request.receiver.populate('avatar')
           friends.push({request_id: request.id, user: request.receiver})
         }}))
-          res.send(friends)
-      } else res.json(requests)
+        const cursor = Number(req.query.page) + 10
+        const hasMore = cursor - 10 < count
+      res.send({friends, cursor, hasMore})
+    } else res.json(friends)
   } catch (e) {
     next(e)
   }
@@ -105,13 +98,17 @@ exports.show_friends = async (req, res, next) => {
 
 exports.suggestions = async (req, res, next) => {
   try {
-    User.findById(req.user.user_id).select('friend_requests')
-    .then( async(result) => {
-      const suggestions = await User.find({$and: [{_id: { $nin: req.user.user_id}}, {friend_requests: {$nin: result.friend_requests}}]})
-      .select('_id username first_name last_name avatar friend_requests')
-      .populate('avatar')
-      res.send(suggestions)
-    })
+    const result = await User.findById(req.user.user_id).select('friend_requests')
+    const [suggestions, count] = await Promise.all([
+      User.find({$and: [{_id: { $nin: req.user.user_id}}, {friend_requests: {$nin: result.friend_requests}}]}, {password: 0})
+      .skip(req.query.page)
+      .limit(10),
+      User.find({$and: [{_id: { $nin: req.user.user_id}}, {friend_requests: {$nin: result.friend_requests}}]})
+      .count()
+    ])
+      const cursor = Number(req.query.page) + 10
+      const hasMore = cursor - 10 < count
+      res.send({suggestions, cursor, hasMore})
   } catch (e) {
     next(e)
   }
@@ -119,23 +116,28 @@ exports.suggestions = async (req, res, next) => {
 
 exports.pending = async (req, res, next) => {
   try {
-    const requests = await FriendRequest.find({$or: [{requester: req.user.user_id, status: 'pending'}, {receiver: req.user.user_id, status: 'pending'}]})
+    const [requests, count] = await Promise.all([
+      FriendRequest.find({$or: [{requester: req.user.user_id, status: 'pending'}, {receiver: req.user.user_id, status: 'pending'}]})
       .populate('requester', 'username first_name last_name avatar')
       .populate('receiver', 'username first_name last_name avatar')
       .sort({date: -1})
-      
-   if(requests?.length > 0){
+      .skip(req.query.page)
+      .limit(10),
+      FriendRequest.find({$or: [{requester: req.user.user_id, status: 'pending'}, {receiver: req.user.user_id, status: 'pending'}]}).count()
+    ])
     const friends = []
+   if(requests?.length > 0){
       await Promise.all(requests.map(async(request) => {
       if(request.receiver._id == req.user.user_id) {
-        await request.requester.populate('avatar')
         friends.push({request_id: request.id, user: request.requester, type: 'receiver'})
       } else {
-        await request.receiver.populate('avatar')
         friends.push({request_id: request.id, user: request.receiver, type: 'requester'})
       }}))
-        res.send(friends)
-      } else res.json(requests)
+
+      const cursor = Number(req.query.page) + 10
+      const hasMore = cursor - 10 < count
+      res.send({pending: friends, cursor, hasMore})
+      } else res.json({pending: friends})
   } catch (e) {
     next(e)
   }

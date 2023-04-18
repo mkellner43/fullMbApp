@@ -76,4 +76,7 @@ export default App;
 // get docker working for prod
 // get working in prod env -- then get working in AWS or another free service? Maybe GCP? 
 
-//add fake data and filter what user can see by friends and set defaults
+// add fake data and filter what user can see by friends and set defaults
+
+// infinite scroll posts 
+// infinite scroll friends page

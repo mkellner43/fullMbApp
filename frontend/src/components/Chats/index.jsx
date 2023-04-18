@@ -4,24 +4,24 @@ import FriendPlaceholder from "../Placeholders/FriendPlaceholder";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearch, setSearchResults, setFriend } from "../../pages/Messages/features/messagesSlice";
 import { getThreads } from '../../api/message';
-import { getFriends } from '../../api/friends';
 import { AvatarWithStatus } from "../AvatarWithStatus";
+import { useFriendQuery } from "../hooks/useFriendQuery";
 
 const Chats = () => {
   const dispatch = useDispatch();
   const search = useSelector(state => state.messages.search)
   const searchResults = useSelector(state => state.messages.searchResults)
   const currentUser = useSelector(state => state.login.currentUser)
-
-  const friendQuery = useQuery({queryKey: ['friends'], queryFn: () => getFriends()})
+  const friendQuery = useFriendQuery();
   const threadQuery = useQuery({queryKey: ['threads'], queryFn: () => getThreads()})
 
   const handleSearch = (e) => {
     dispatch(setSearch(e.target.value))
-    dispatch(setSearchResults(friendQuery.data.filter( friend => {
+    const [results] =friendQuery.data.pages.map(page => page.friends.filter( friend => {
       if(e.target.value.trim().length === 0) return null
-      return friend.user.username.includes(e.target.value)
-    })))
+      return friend.user.username.toLowerCase().includes(e.target.value.toLowerCase())
+    }))
+    dispatch(setSearchResults(results))
   }
   const pickMessage = threadQuery.data?.map(thread => {
     const friend = thread.users.filter(user => user._id !== currentUser.id)[0]
@@ -36,7 +36,7 @@ const Chats = () => {
         {friend?.username} 
       </Typography>
   </Button> })
-
+  console.log(searchResults)
   const pickFromSearch = searchResults?.map(result =>
     <Button
     sx={{display: 'flex', justifyContent: 'flex-start'}}
@@ -50,6 +50,7 @@ const Chats = () => {
     }} >
     <AvatarWithStatus user={result.user} />
     <Typography ml={1}>
+      {console.log(result)}
       {result.user.username} 
     </Typography>
   </Button>)

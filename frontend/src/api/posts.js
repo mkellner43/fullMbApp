@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const getPosts = async() => {
+export const getPosts = async(pageParam) => {
   try {
-    const { data } = await axios.get(`posts`)
+    const { data } = await axios.get(`posts?page=${pageParam}`)
     return data
   } catch (error) {
     return error    

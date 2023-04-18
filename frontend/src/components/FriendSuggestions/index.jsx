@@ -14,17 +14,17 @@ const FriendSuggestions = ({suggestionsQuery, sendRequestQuery}) => {
     navigate('/profile')
   }
 
-  return suggestionsQuery.data.length === 0 ?
+  return suggestionsQuery.data.pages[0].suggestions.length === 0 ?
     <Typography textAlign={'center'} >No suggestions</Typography>
     :
-    suggestionsQuery.data.map(friend => 
-    <div key={friend._id} className='small-card'>
+    suggestionsQuery.data.pages.map(page => page.suggestions.map(friend => 
+      <div key={friend._id} className='small-card'>
       <div className="post-avatar"
         onClick={() => redirectToProfile({id: friend._id, user: friend})}
-      >
+        >
         <AvatarWithStatus
           user={friend}
-        />
+          />
         <h5 className='text-ellipsis-flex pl1'>
           {friend.first_name + ' ' +friend.last_name}
         </h5>
@@ -37,10 +37,10 @@ const FriendSuggestions = ({suggestionsQuery, sendRequestQuery}) => {
           friend: friend._id, 
           currentUser: currentUser.id, 
         })}
-      >
+        >
         Add
       </Button>
-  </div>)
+  </div>)) 
 }
 
 export default FriendSuggestions;

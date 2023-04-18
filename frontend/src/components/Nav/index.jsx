@@ -81,7 +81,7 @@ export const Nav = ({currentUser}) => {
    
 
   return (
-    <Box sx={{marginBottom: '6rem'}}>
+    <Box>
       <Snackbar open={notificationOpen} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
         <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }}>
           {notificationMsg}

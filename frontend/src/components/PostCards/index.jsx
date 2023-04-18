@@ -1,13 +1,37 @@
-import React from 'react';
 import Cards from '../Cards';
 import { Typography } from '@mui/material';
+import usePostsQuery from '../../components/hooks/usePostsQuery';
+import { useEffect } from 'react';
 
-const PostCards = ({posts, currentUser}) => {
-  return posts.length === 0 ?
-      <Typography variant='h5' component='h1' textAlign='center' sx={{mt: 3}}>No Posts Yet...</Typography>
+const PostCards = ({currentUser}) => {
+  const { data, hasNextPage, fetchNextPage } = usePostsQuery();
+
+  useEffect(() => {
+    const handleScroll = (e) => {
+      console.log(window.innerHeight + window.scrollY >= document.body.offsetHeight)
+      if(window.innerHeight + window.scrollY >= document.body.offsetHeight && 
+        hasNextPage) {
+        fetchNextPage()
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  
+  return data.length === 0 ?
+    <Typography variant='h5' component='h1' textAlign='center' sx={{mt: 3}}>
+      No Posts Yet...
+    </Typography>
     :
-    posts.map(post => 
-      <div key={post._id} style={{marginTop: '1rem', width: '100%'}}>  
+    data.pages.map( page => page.posts.map(post => 
+      <div 
+        key={post._id} 
+        style={{marginTop: '1rem', width: '100%'}} 
+      >  
         <Cards 
           post={post?.post_body}
           comments={post?.comments}
@@ -17,7 +41,7 @@ const PostCards = ({posts, currentUser}) => {
           object={post}
           currentUser={currentUser}
         />
-      </div>  
+      </div>)
     )
 }
 

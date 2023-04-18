@@ -59,14 +59,19 @@ exports.delete = (req, res, next) => {
 
 exports.index = async(req, res, next) => {
   try {
-    const posts = await Post.find({})
-    .sort({date: -1})
-    .limit(10)
-    .populate("user", 'first_name last_name username _id avatar')
-    .populate('likes', 'username')
-    .populate('commentCount')
-    .populate({path:'comments', populate: {path: 'user', select: 'username first_name last_name avatar'}, options: {sort: {date: -1}, perDocumentLimit: 2}})
-    res.send(posts)
+    const [posts, count] = await Promise.all([
+      Post.find({})
+      .sort({date: -1})
+      .skip(req.query.page)
+      .limit(10)
+      .populate("user", 'first_name last_name username _id avatar')
+      .populate('likes', 'username')
+      .populate('commentCount')
+      .populate({path:'comments', populate: {path: 'user', select: 'username first_name last_name avatar'}, options: {sort: {date: -1}, perDocumentLimit: 2}}),
+      Post.count()
+    ])
+    const hasMore = () => Number(req.query.page) + 10 < count ? true : false
+    res.send({posts, cursor: Number(req.query.page) + 10, count, hasMore: hasMore()})
   } catch (e) {
     next(e)
   }

@@ -183,7 +183,8 @@ const Cards = ({post, comments, date, user, object, currentUser}) => {
           </Typography>
         </div>
       {object.image && 
-      <img className='post-image' alt={post} src={object.image.url} />}
+      <img className='post-image' alt={post} src={object.image} />}
+      {/* src={object.image.url} for fb-database, I structured devMb data slightly differently */}
       {/* post actions */}
       <div className='post-actions'>
           <IconButton sx={{}} size="small" onClick={handleLike}>

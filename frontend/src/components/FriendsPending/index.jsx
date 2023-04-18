@@ -12,55 +12,53 @@ const FriendsPending = ({pendingQuery, acceptQuery, declineQuery}) => {
     dispatch(setUserProfile(user))
     navigate('/profile')
   }
-
-  return pendingQuery.data?.length === 0 ?
-    <Typography textAlign={'center'} >No pending friend requests</Typography>
-    :
-    pendingQuery.data.map(friend => 
-    <div key={friend.user._id} className='small-card'>
-      <div className="post-avatar"
-        onClick={() => redirectToProfile({id: friend.user._id, user: friend.user})}
-      >
-        <AvatarWithStatus
-          user={friend.user}
-        />
-        <h5 className='text-ellipsis-flex pl1'>
-          {friend.user.first_name + ' ' + friend.user.last_name}
-        </h5>
-      </div>
-      {console.log(friend)}
-      {friend.type === 'receiver' ?
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <Button 
-          variant='outlined' 
-          color="success" 
-          size='small' 
-          onClick={() => 
-            acceptQuery.mutate({
-              request_id: friend.request_id, 
-            })
-          }>
-          Accept
-        </Button>
-        <Button 
-          variant='outlined' 
-          color="error" 
-          size='small' 
-          sx={{mt: 1}} 
-          onClick={() => 
-            declineQuery.mutate({
-              request_id: friend.request_id,
-            })
-          }>
-          Decline
-        </Button>
-      </div>
-      :
+  return pendingQuery.data?.pages[0].pending?.length > 0 ?
+    pendingQuery.data.pages.map(page => page.pending.map(request => 
+      <div key={request.user._id} className='small-card'>
+        <div className="post-avatar"
+          onClick={() => redirectToProfile({id: request.user._id, user: request.user})}
+        >
+          <AvatarWithStatus
+            user={request.user}
+          />
+          <h5 className='text-ellipsis-flex pl1'>
+            {request.user.first_name + ' ' + request.user.last_name}
+          </h5>
+        </div>
+        {/* change back to receiver */}
+        {request.type === 'requester' ?
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          <Button 
+            variant='outlined' 
+            color="success" 
+            size='small' 
+            onClick={() => 
+              acceptQuery.mutate({
+                request_id: request.request_id, 
+              })
+            }>
+            Accept
+          </Button>
+          <Button 
+            variant='outlined' 
+            color="error" 
+            size='small' 
+            sx={{mt: 1}} 
+            onClick={() => 
+              declineQuery.mutate({
+                request_id: request.request_id,
+              })
+            }>
+            Decline
+          </Button>
+        </div>
+        :
         <Box sx={{display: 'flex', flexDirection: 'column'}}>
           <Chip color='warning' variant='filled'label='PENDING...' />
         </Box>}
-      </div>
-  )
+    </div>))
+  :
+  <Typography textAlign={'center'} >No pending friend requests</Typography>
 }
 
 export default FriendsPending;

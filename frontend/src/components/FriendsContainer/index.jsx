@@ -13,18 +13,17 @@ const MapFriends = ({friendQuery, handleConfirm}) => {
     navigate('/profile')
   }
 
-  return friendQuery.data.length === 0 ?
-    <Typography textAlign={'center'}>No current friends</Typography>
-    :
-    friendQuery.data.map(friend => 
-    <div key={friend.request_id} className='small-card'>
+  return friendQuery.data?.pages[0].friends?.length > 0 ?
+  friendQuery.data.pages.map(page => page.friends.map(friend =>
+    { 
+      return (<div key={friend.request_id} className='small-card'>
       <div className="post-avatar" 
         onClick={() => redirectToProfile({id: friend.user._id, user: friend.user})}
-      >
+        >
         <AvatarWithStatus
           variant='outlined'
           user={friend.user}
-        />
+          />
         <h5 className='text-ellipsis-flex pl1'>
           {friend.user.first_name + ' ' + friend.user.last_name}
         </h5>
@@ -35,7 +34,9 @@ const MapFriends = ({friendQuery, handleConfirm}) => {
         >
           unfriend
         </Button>
-    </div>)
+    </div>)}))
+    :
+    <Typography textAlign={'center'}>No current friends</Typography>
   }
 
 export default MapFriends;
