@@ -86,7 +86,7 @@ exports.show = (req, res, next) => {
 
 exports.profile = async(req, res, next) => {
   try{
-    const [posts, count] = await Promise.all([
+    const [posts, count, user] = await Promise.all([
       Post.find({user: req.params.id})
       .populate("user", 'first_name last_name username _id avatar')
       .populate('likes', 'username')
@@ -95,10 +95,11 @@ exports.profile = async(req, res, next) => {
       .sort({date: -1})
       .skip(req.query.page)
       .limit(10),
-      Post.find({user: req.params.id}).count()
+      Post.find({user: req.params.id}).count(),
+      User.findById(req.params.id, '_id username first_name last_name avatar')
     ])
     const hasMore = Number(req.query.page) + 10 < count ? true : false
-    res.send({posts, cursor: Number(req.query.page) + 10, count, hasMore})
+    res.send({posts, cursor: Number(req.query.page) + 10, count, hasMore, user})
   } catch (err) {
     next(err)
   }
