@@ -12,7 +12,7 @@ import { setUserProfile } from '../../pages/Profile/features/profileSlice';
 import SimpleTextAnswer from '../Modals/SimpleTextAnswer';
 import './style/style.scss';
 
-const Cards = ({post, comments, date, user, object, currentUser}) => {
+const Cards = ({post, date, user, object, currentUser}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const UsFormatter = new Intl.DateTimeFormat('en-US');
@@ -126,7 +126,7 @@ const Cards = ({post, comments, date, user, object, currentUser}) => {
 
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${user._id}`)
   }
 
   const checkSubmit = e => e.key === 'Enter' && submitComment(e)
@@ -144,21 +144,23 @@ const Cards = ({post, comments, date, user, object, currentUser}) => {
     queryFn: ({pageParam}) => {
       return getPostComments(object.id, 2, pageParam)
     },
+    retry: false,
     getNextPageParam: (lastPage, pages) => {
       if(lastPage.nextCursor < object.commentCount) 
         return lastPage.nextCursor
       else return undefined;
-    }
+    },
+    enabled: !!object
   })
 
-  const more_post_comments = data?.pages.flatMap(page => page.comments.flatMap(comment => <Comment key={comment._id} comment={comment}/>))
+  const more_post_comments = data?.pages?.map(page => page.comments?.map(comment => <Comment key={comment._id} comment={comment}/>))
 
   return (
     <div className='post-card'>
       {/* heading */}
       <div className="post-heading">
         <div className='post-avatar'
-        onClick={() => redirectToProfile({id: object.user._id, user: object.user})}
+        onClick={() => redirectToProfile(object.user)}
         >
           <AvatarWithStatus user={object.user} width={'3rem'} height= {'3rem'} />
           <Typography variant="h3" fontSize='1rem' ml={1} fontWeight={400} noWrap>
@@ -188,7 +190,7 @@ const Cards = ({post, comments, date, user, object, currentUser}) => {
       {/* post actions */}
       <div className='post-actions'>
           <IconButton sx={{}} size="small" onClick={handleLike}>
-        <Badge badgeContent={object.likes.length} color="primary">
+        <Badge badgeContent={object.likes?.length} color="primary">
             <ThumbUp sx={{mt: 0.6}} color={likes ? 'primary' : ''}/>
         </Badge>
           </IconButton>
