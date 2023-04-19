@@ -32,7 +32,7 @@ export const Nav = ({currentUser}) => {
 
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${currentUser.id}`)
   }
 
   const handleLogout = () => {
