@@ -9,6 +9,7 @@ import { setAvatarModule } from './features/profileSlice';
 import NewAvatar from '../../components/Modals/NewAvatar';
 import { useParams } from 'react-router-dom';
 import { useProfilePostsQuery } from '../../components/hooks/usePostsQuery';
+import '../../components/MessageSection/style/style.scss';
 
 const Profile = () => {
   const { id } = useParams();
@@ -35,6 +36,16 @@ const Profile = () => {
         </Button>}
           { currentUser.id === getProfileData.data.pages[0].posts[0].user._id && <div style={{marginTop: '1rem', width: '100%'}}><PostInput /></div> }
           {profilePosts && <PostCards posts={profilePosts} currentUser={currentUser} />}
+          {
+            getProfileData.isFetchingNextPage &&
+            <div className='loader'>
+              <div className="dot-container">
+                <span className='dot1'/>
+                <span className='dot2'/>
+                <span className='dot3'/>
+              </div>
+            </div>
+          }
         </div>
       }
       <NewAvatar />

@@ -12,3 +12,58 @@
   text-align: center;
   width: 100%;
 }
+
+.loader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2rem;
+
+  .dot-container {
+    padding: 0.65rem 0.25rem;
+    width: 4rem;
+    background-color: grey;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-left: 0.5rem;
+    
+    .dot1 {
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 50%;
+      background-color: #fff;
+      animation: fade infinite 2s 0.5s;
+    }
+    
+    .dot2 {
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 50%;
+      background-color: #fff;
+      animation: fade infinite 2s 1s;
+    }
+    
+    .dot3 {
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 50%;
+      background-color: #fff;
+      animation: fade infinite 2s 1.5s;
+    }
+  }
+  
+  @keyframes fade {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.25;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}

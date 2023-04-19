@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { setToken } from '../Login/features/loginSlice';
 import { removeMainError } from './features/homeSlice';
 import {usePostsQuery} from '../../components/hooks/usePostsQuery';
+import '../../components/MessageSection/style/style.scss';
 
 const Home = ({currentUser}) => {
   const mainError = useSelector(state => state.home.mainError)
@@ -43,11 +44,13 @@ const Home = ({currentUser}) => {
           <PostCards currentUser={currentUser} />
         }
         {
-          postsQuery.isFetchingNextPage && 
-          <div className="dot-container">
-            <span className='dot1'/>
-            <span className='dot2'/>
-            <span className='dot3'/>
+          postsQuery.isFetchingNextPage &&
+          <div className='loader'>
+            <div className="dot-container">
+              <span className='dot1'/>
+              <span className='dot2'/>
+              <span className='dot3'/>
+            </div>
           </div>
         }
         </div>
