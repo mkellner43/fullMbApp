@@ -54,7 +54,7 @@ const App = () => {
         <Nav currentUser={currentUser}/>
         <Routes>
           <Route element={<Home  currentUser={currentUser}/>} path="/"/>
-          <Route element={<Profile currentUser={currentUser} />} path="/profile" />
+          <Route element={<Profile currentUser={currentUser} />} path="/profile/:id" />
           <Route element={<Friends currentUser={currentUser} />} path="/friends" />
           <Route element={<Messages currentUser={currentUser} />} path='/messages' />
           <Route element={<Notifications currentUser={currentUser} />} path='/notifications' />
