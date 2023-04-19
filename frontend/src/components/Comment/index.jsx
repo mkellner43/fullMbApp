@@ -12,7 +12,7 @@ const Comment = ({comment}) => {
   
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${user.id}`)
   }
   
   return (

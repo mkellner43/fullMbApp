@@ -27,14 +27,14 @@ const Profile = () => {
       </div>
       :
       <div className='page-width center' style={{overflow: 'scroll', height: '100%', scrollbarWidth: 'none', paddingTop: '6rem'}}>
-        <AvatarWithStatus user={getProfileData.data?.pages[0].posts[0].user} width={'5rem'} height={'5rem'} />
-        <Typography>{getProfileData.data?.pages[0].posts[0].user.username}</Typography>
-        {currentUser.id === getProfileData.data.pages[0].posts[0].user._id &&
+        <AvatarWithStatus user={getProfileData.data?.pages[0].user} width={'5rem'} height={'5rem'} />
+        <Typography>{getProfileData.data?.pages[0].user.username}</Typography>
+        {currentUser.id === id &&
         <Button variant='contained' size='small' component='label' 
         onClick={() => dispatch(setAvatarModule(true))}>
           update avatar
         </Button>}
-          { currentUser.id === getProfileData.data.pages[0].posts[0].user._id && <div style={{marginTop: '1rem', width: '100%'}}><PostInput /></div> }
+          { currentUser.id === id && <div style={{marginTop: '1rem', width: '100%'}}><PostInput /></div> }
           {profilePosts && <PostCards posts={profilePosts} currentUser={currentUser} />}
           {
             getProfileData.isFetchingNextPage &&

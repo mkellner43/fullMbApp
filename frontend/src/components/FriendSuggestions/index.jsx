@@ -11,7 +11,7 @@ const FriendSuggestions = ({suggestionsQuery, sendRequestQuery}) => {
 
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${user.id}`)
   }
 
   return suggestionsQuery.data.pages[0].suggestions.length === 0 ?

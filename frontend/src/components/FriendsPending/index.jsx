@@ -10,7 +10,7 @@ const FriendsPending = ({pendingQuery, acceptQuery, declineQuery}) => {
 
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${user.id}`)
   }
   return pendingQuery.data?.pages[0].pending?.length > 0 ?
     pendingQuery.data.pages.map(page => page.pending.map(request => 
@@ -25,8 +25,7 @@ const FriendsPending = ({pendingQuery, acceptQuery, declineQuery}) => {
             {request.user.first_name + ' ' + request.user.last_name}
           </h5>
         </div>
-        {/* change back to receiver */}
-        {request.type === 'requester' ?
+        {request.type === 'receiver' ?
         <div style={{display: 'flex', flexDirection: 'column'}}>
           <Button 
             variant='outlined' 

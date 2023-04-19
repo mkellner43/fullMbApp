@@ -10,7 +10,7 @@ const MapFriends = ({friendQuery, handleConfirm}) => {
 
   const redirectToProfile = (user) => {
     dispatch(setUserProfile(user))
-    navigate('/profile')
+    navigate(`/profile/${user.id}`)
   }
 
   return friendQuery.data?.pages[0].friends?.length > 0 ?
