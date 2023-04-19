@@ -23,11 +23,10 @@ const Post = () => {
     // console.log('post sent'),
     onMutate: (variables) => {
       queryClient.cancelQueries(['posts'])
-      queryClient.cancelQueries(['profile'])
+      queryClient.cancelQueries(['profile', currentUser.id])
       const oldPosts = queryClient.getQueryData(['posts'])
       const oldProfile = queryClient.getQueryData(['profile', currentUser.id])
-
-      queryClient.setQueryData(['profile', currentUser.id], old => {
+      if(oldProfile) queryClient.setQueryData(['profile', currentUser.id], old => {
         const newPages = old.pages.map((page, idx) => 
         idx !== 0 ? page : {...page, posts: [{_id: Math.random(), post_body: variables.post_body, post_image: variables.post_image, user: currentUser, likes: [], comments: []},...page.posts]})
         return {
@@ -38,7 +37,7 @@ const Post = () => {
 
       queryClient.setQueryData(['posts'], old => {
         const newPages = old.pages.map((page, idx) => 
-        idx !== 0 ? page : {...page, posts: [{_id: Math.random(), post_body: variables.post_body, post_image: variables.post_image, user: currentUser, likes: [], comments: []},...page.posts]})
+        idx !== 0 ? page : {...page, posts: [{_id: Math.random(), post_body: variables.post_body, post_image: variables.post_image, user: currentUser, likes: [], comments: [], date: Date.now()},...page.posts]})
         return {
           ...old,
           pages: newPages

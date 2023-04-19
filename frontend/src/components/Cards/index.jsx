@@ -23,13 +23,48 @@ const Cards = ({post, date, user, object, currentUser}) => {
   const queryClient = useQueryClient();
   const socket = useSocket();
 
+  // need to update since page was added with infinite query
+
   const deleteThisPost = useMutation({
-    mutationFn: deletePost,
+    mutationFn: 
+    deletePost,
     onMutate: async(variables) => {
-      await queryClient.cancelQueries(['posts'])
+      //adjust for this mutation this is for sending a post
+      queryClient.cancelQueries(['posts'])
+      queryClient.cancelQueries(['profile', currentUser.id])
       const oldPosts = queryClient.getQueryData(['posts'])
-      queryClient.setQueryData(['posts'], (old) => old.filter(post => post._id !== variables))
-      return {oldPosts}
+      const oldProfile = queryClient.getQueryData(['profile', currentUser.id])
+      queryClient.setQueryData(['profile', currentUser.id], old => {
+        if(!oldProfile) return undefined
+        const newPages = old.pages?.map(page => {
+           return {
+            ...page,
+            posts: page.posts.filter(post => post._id !== variables)
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+
+      queryClient.setQueryData(['posts'], old => {
+        const newPages = old.pages?.map(page => {
+           return {
+            ...page,
+            posts: page.posts.filter(post => post._id !== variables)
+          }
+        })
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+      
+      return {oldPosts, oldProfile}
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.removeQueries([`post:${variables}`, 'comments'])
     },
     onError: (data, variables, context) => {
       queryClient.setQueryData(['posts'], context.oldPosts)
@@ -40,35 +75,39 @@ const Cards = ({post, date, user, object, currentUser}) => {
   })
 
   const addComment = useMutation({
-    mutationFn: postComment,
+    mutationFn: 
+    postComment,
+    // () => console.log('commented'),
     onMutate: async(variables) => {
-      await queryClient.cancelQueries(['posts'])
-      const oldPosts = queryClient.getQueryData(['posts'])
+      await queryClient.cancelQueries([`post: ${variables.object._id}`, `comments`])
+      const oldComments = queryClient.getQueryData([`post: ${variables.object._id}`, `comments`])
       const comment = { 
-        _id: 'newpost',
+        _id: Math.random(),
         comment_body: variables.comment,
         date: Date.now(),
         user: variables.currentUser,
         post: variables.object._id
       }
-      queryClient.setQueryData(['posts'], (old) => {
-        old.map(post => {
-          if(post._id === variables.object._id){
-            post.comments.unshift(comment)
-            return post
-          } else return post
-        })
+      queryClient.setQueryData([`post: ${variables.object._id}`, `comments`], (old) => {
+        const newPages = old.pages.map((page, idx) => 
+          idx === 0 ? { ...page, comments: [comment, ...page.comments] } : page
+        )
+        return {
+          ...old,
+          pages: newPages
+        }
       })
-      return {oldPosts}
+      return {oldComments}
     },
     onSuccess: (data) => {
       socket?.emit('notification', {to_id: data.user, type: 'Comment', msg: `${currentUser.username} commented on your post!`})
     },
-    onError: (err, vars, context ) => {
-      queryClient.setQueryData(['posts'], context.oldPosts)
+    onError: (_err, variables, context ) => {
+      queryClient.setQueryData([`post: ${variables.object._id}`, `comments`], context.oldPosts)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries(['posts'])
+    onSettled: (data) => {
+      console.log(data)
+      queryClient.invalidateQueries([`post: ${data._id}`, `comments`])
     }
   })
 
@@ -141,8 +180,8 @@ const Cards = ({post, date, user, object, currentUser}) => {
     // status,
   } = useInfiniteQuery({
     queryKey: [`post: ${object.id}`, 'comments'],
-    queryFn: ({pageParam}) => {
-      return getPostComments(object.id, 2, pageParam)
+    queryFn: ({pageParam=0}) => {
+      return getPostComments(object.id, 10, pageParam)
     },
     retry: false,
     getNextPageParam: (lastPage, pages) => {
@@ -150,7 +189,7 @@ const Cards = ({post, date, user, object, currentUser}) => {
         return lastPage.nextCursor
       else return undefined;
     },
-    enabled: !!object
+    enabled: !!object.id
   })
 
   const more_post_comments = data?.pages?.map(page => page.comments?.map(comment => <Comment key={comment._id} comment={comment}/>))
