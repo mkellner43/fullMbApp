@@ -35,7 +35,7 @@ export const getNotifications = async(cursor) => {
     const { data } = await axios.get(`users/notifications?skip=${cursor}&limit=6`)
     return data
   } catch (error) {
-    return error
+    throw error
   }
 }
 
