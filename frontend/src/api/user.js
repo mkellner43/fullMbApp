@@ -22,9 +22,9 @@ export const createUser = async(user) => {
   }
 }
 
-export const profile = async(id) => {
+export const profile = async(id, pageParam) => {
   try {
-    const { data } = await axios.get(`posts/profile/${id}`)
+    const { data } = await axios.get(`posts/profile/${id}?page=${pageParam}`)
     return data
   } catch (error) {
     return error 
