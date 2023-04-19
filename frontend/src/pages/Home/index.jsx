@@ -6,7 +6,7 @@ import PostCards from '../../components/PostCards';
 import { useDispatch, useSelector } from 'react-redux';
 // import { setToken } from '../Login/features/loginSlice';
 import { removeMainError } from './features/homeSlice';
-import usePostsQuery from '../../components/hooks/usePostsQuery';
+import {usePostsQuery} from '../../components/hooks/usePostsQuery';
 
 const Home = ({currentUser}) => {
   const mainError = useSelector(state => state.home.mainError)

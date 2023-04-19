@@ -6,7 +6,7 @@ import { sendPost } from '../../api/posts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AddPhotoAlternateOutlined, Close } from '@mui/icons-material';
 // import { setToken } from '../../pages/Login/features/loginSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setMainError } from '../../pages/Home/features/homeSlice';
 import './style/style.scss';
 
@@ -14,16 +14,47 @@ const Post = () => {
   const dispatch = useDispatch();
   const [post, setPost] = useState();
   const [imageAvailable, setImageAvailable] = useState();
+  const currentUser = useSelector(state => state.login.currentUser)
   const queryClient = useQueryClient();
 
   const send = useMutation({
-    mutationFn: (object) => sendPost(object),
-    onSuccess: data => {
-      queryClient.setQueryData(['posts'], (oldData) => [data, ...oldData])
-      queryClient.invalidateQueries(['posts'])
+    mutationFn: (object) => 
+    sendPost(object),
+    // console.log('post sent'),
+    onMutate: (variables) => {
+      queryClient.cancelQueries(['posts'])
+      queryClient.cancelQueries(['profile'])
+      const oldPosts = queryClient.getQueryData(['posts'])
+      const oldProfile = queryClient.getQueryData(['profile', currentUser.id])
+
+      queryClient.setQueryData(['profile', currentUser.id], old => {
+        const newPages = old.pages.map((page, idx) => 
+        idx !== 0 ? page : {...page, posts: [{_id: Math.random(), post_body: variables.post_body, post_image: variables.post_image, user: currentUser, likes: [], comments: []},...page.posts]})
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+
+      queryClient.setQueryData(['posts'], old => {
+        const newPages = old.pages.map((page, idx) => 
+        idx !== 0 ? page : {...page, posts: [{_id: Math.random(), post_body: variables.post_body, post_image: variables.post_image, user: currentUser, likes: [], comments: []},...page.posts]})
+        return {
+          ...old,
+          pages: newPages
+        }
+      })
+
+      return {oldPosts, oldProfile}
     },
-    // onError: () => dispatch(setToken())
-    onError: (err) => {
+    onSettled: () => {
+      queryClient.invalidateQueries(['posts'])
+      queryClient.invalidateQueries(['profile', currentUser.id])
+    },
+    onError: (err, variables, context) => {
+      console.log(err, variables, context)
+      queryClient.setQueryData(['posts'], context.oldPosts)
+      queryClient.setQueryData(['profile', currentUser.id], context.oldProfile)
       dispatch(setMainError(err.message))
     }
   })
@@ -31,7 +62,7 @@ const Post = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if(!post) return
-    const object = JSON.stringify({post_body: post, post_image: imageAvailable})
+    const object = {post_body: post, post_image: imageAvailable}
     send.mutate(object)
     setPost('')
     discardImage()
