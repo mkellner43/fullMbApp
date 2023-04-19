@@ -178,7 +178,7 @@ const Cards = ({post, comments, date, user, object, currentUser}) => {
       {/* post content */}
       <div className='post-content'>
         <div className='post-text'>
-          <Typography variant="body1" fontWeight={200} noWrap>
+          <Typography variant="body1" fontWeight={200} >
             {post}
           </Typography>
         </div>
