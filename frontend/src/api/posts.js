@@ -45,7 +45,7 @@ export const postComment = async({object, comment}) => {
   }
 }
 
-export const getPostComments = async(id, limit=2, skip=0) => {
+export const getPostComments = async(id, limit=10, skip=0) => {
   try {
     const { data } = await axios.get(`comments/${id}/?limit=${limit}&skip=${skip}`)
     return data
