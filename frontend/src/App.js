@@ -77,6 +77,5 @@ export default App;
 // get working in prod env -- then get working in AWS or another free service? Maybe GCP? 
 
 // add fake data and filter what user can see by friends and set defaults
-
-// infinite scroll posts 
-// infinite scroll friends page
+// theme button does weird stuff when naving to profile that has not been cached
+// find out why big boy
