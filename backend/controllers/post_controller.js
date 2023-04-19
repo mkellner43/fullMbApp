@@ -84,20 +84,24 @@ exports.show = (req, res, next) => {
     .catch(next)
 }
 
-exports.profile = (req, res, next) => {
-  Post.find({user: req.params.id})
-  .populate("user", 'first_name last_name username _id avatar')
-  .populate('likes', 'username')
-  .populate('commentCount')
-  .populate({path:'comments', populate: {path: 'user', select: 'username first_name last_name avatar', populate: 'avatar'}, options: {sort: {date: -1}, limit: 2}})
-  .populate({path:'user', populate: {path: 'avatar'}})
-  .sort({date: -1}).exec()
-  .then(async(result) => {
-    const user = await User.findById(req.params.id, '_id username first_name last_name avatar')
-    await user.populate('avatar')
-    res.send({posts: result, user: user})
-  })
-  .catch(next)
+exports.profile = async(req, res, next) => {
+  try{
+    const [posts, count] = await Promise.all([
+      Post.find({user: req.params.id})
+      .populate("user", 'first_name last_name username _id avatar')
+      .populate('likes', 'username')
+      .populate('commentCount')
+      .populate({path:'comments', populate: {path: 'user', select: 'username first_name last_name avatar', populate: 'avatar'}, options: {sort: {date: -1}, limit: 2}})
+      .sort({date: -1})
+      .skip(req.query.page)
+      .limit(10),
+      Post.find({user: req.params.id}).count()
+    ])
+    const hasMore = Number(req.query.page) + 10 < count ? true : false
+    res.send({posts, cursor: Number(req.query.page) + 10, count, hasMore})
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.search = () => {
