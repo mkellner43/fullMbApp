@@ -10,6 +10,7 @@ export const useFriendQuery = () => {
     queryKey: ['friends'],
     queryFn: async({pageParam=0}) => getFriends(pageParam),
     getNextPageParam: (lastPage, pages) => {
+      console.log(lastPage, pages)
       if(lastPage.hasMore) return lastPage.cursor
       return undefined
     },

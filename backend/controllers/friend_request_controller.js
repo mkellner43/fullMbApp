@@ -90,7 +90,7 @@ exports.show_friends = async (req, res, next) => {
         const cursor = Number(req.query.page) + 10
         const hasMore = cursor - 10 < count
       res.send({friends, cursor, hasMore})
-    } else res.json(friends)
+    } else res.json({friends})
   } catch (e) {
     next(e)
   }

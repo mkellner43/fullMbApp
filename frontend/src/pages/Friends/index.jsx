@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import { sendFriendRequest, acceptFriend, declineFriend } from '../../api/friends';
 import {Typography} from '@mui/material';
 import { useSocket } from '../../context/SocketProvider';
@@ -22,6 +22,9 @@ const Friends = ({currentUser}) => {
   const friendQuery = useFriendQuery();
   const pendingQuery = usePendingQuery();
   const suggestionsQuery = useSuggestionQuery();
+  const friendsScroll = useRef();
+  const pendingScroll = useRef();
+  const suggestionsScroll = useRef();
 
   // NEED TO RESTRUCTURE OPTOMISM
   // get infinite scroll and search to work here (: 
@@ -200,6 +203,26 @@ const Friends = ({currentUser}) => {
     }
   })
 
+  useLayoutEffect(() => {
+    if(friendsScroll.current?.clientHeight === friendsScroll.current?.scrollHeight && friendQuery.hasNextPage) friendQuery.fetchNextPage()
+    
+    if(pendingScroll.current?.clientHeight === pendingScroll.current?.scrollHeight && pendingQuery.hasNextPage) pendingQuery.fetchNextPage()
+
+    if(suggestionsScroll.current?.clientHeight === suggestionsScroll.current?.scrollHeight && suggestionsQuery.hasNextPage) suggestionsQuery.fetchNextPage()
+  }, [friendQuery, pendingQuery, suggestionsQuery])
+
+  const handleFriendScroll = () => {
+    if(friendsScroll.current.clientHeight + friendsScroll.current.scrollTop === friendsScroll.current.scrollHeight) friendQuery.fetchNextPage()
+  }
+
+  const handlePendingScroll = () => {
+    if(pendingScroll.current.clientHeight + pendingScroll.current.scrollTop === pendingScroll.current.scrollHeight) pendingQuery.fetchNextPage()
+  }
+
+  const handleSuggestionsScroll = () => {
+    if(suggestionsScroll.current.clientHeight + suggestionsScroll.current.scrollTop === suggestionsScroll.current.scrollHeight) suggestionsQuery.fetchNextPage()
+  }
+
   const handleConfirm = (request_id) => {
     setConfirmDelete(request_id)
     setOpen(true)
@@ -220,7 +243,7 @@ const Friends = ({currentUser}) => {
         {friendQuery.isLoading ?
           <FriendPlaceholder friendPage={true} mb={2}/>
         :
-        <div className="scroll">
+        <div className="scroll" ref={friendsScroll} onScroll={handleFriendScroll}>
           <MapFriends friendQuery={friendQuery} handleConfirm={handleConfirm}/>
         </div>}
       </div>
@@ -231,7 +254,7 @@ const Friends = ({currentUser}) => {
         { pendingQuery.isLoading ?
         <FriendPlaceholder friendPage={true}/>
         :
-        <div className="scroll" >
+        <div className="scroll" ref={pendingScroll} onScroll={handlePendingScroll}>
           <FriendsPending pendingQuery={pendingQuery} acceptQuery={acceptQuery} declineQuery={declineQuery} /> 
         </div>
         }
@@ -243,7 +266,7 @@ const Friends = ({currentUser}) => {
         { suggestionsQuery.isLoading ? 
         <FriendPlaceholder friendPage={true}/>
         :
-        <div className="scroll" >
+        <div className="scroll" ref={suggestionsScroll} onScroll={handleSuggestionsScroll}>
           <FriendSuggestions suggestionsQuery={suggestionsQuery} sendRequestQuery={sendRequestQuery} currentUser={currentUser} /> 
         </div>}
       </div>
