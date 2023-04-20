@@ -298,7 +298,7 @@ const Cards = ({post, date, user, object, currentUser}) => {
           onClick={() => setIsCommenting(prevState => !prevState)}
           color={isCommenting ? 'primary' : ''}
           >
-          <Badge badgeContent={object.commentCount} color="primary">
+          <Badge badgeContent={data?.pages[0].comments?.length} color="primary">
             <ChatBubble sx={{mt: 0.6}}/>
           </Badge>
         </IconButton>

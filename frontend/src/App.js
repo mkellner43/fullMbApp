@@ -81,3 +81,4 @@ export default App;
 // get working in prod env -- then get working in AWS or another free service? Maybe GCP? 
 
 // add fake data and filter what user can see by friends and set defaults
+// comment number need to optomistically update
