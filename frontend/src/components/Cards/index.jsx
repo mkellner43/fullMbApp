@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { postLike, postComment, deletePost, getPostComments } from '../../api/posts';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Delete, ThumbUp, ChatBubble } from '@mui/icons-material'
 import { TextField, Button, Badge, Typography, IconButton } from '@mui/material';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,8 @@ import SimpleTextAnswer from '../Modals/SimpleTextAnswer';
 import './style/style.scss';
 
 const Cards = ({post, date, user, object, currentUser}) => {
+  const location = useLocation();
+  const urlParams = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const UsFormatter = new Intl.DateTimeFormat('en-US');
@@ -22,8 +24,6 @@ const Cards = ({post, date, user, object, currentUser}) => {
   const [modal, setModal] = useState(false);
   const queryClient = useQueryClient();
   const socket = useSocket();
-
-  // need to update since page was added with infinite query
 
   const deleteThisPost = useMutation({
     mutationFn: 
@@ -112,20 +112,79 @@ const Cards = ({post, date, user, object, currentUser}) => {
   })
 
   const addLike = useMutation({
-    mutationFn: postLike,
+    mutationFn: 
+    postLike,
     onMutate: async(variables) => {
       await queryClient.cancelQueries(['posts'])
       const oldPosts = queryClient.getQueryData(['posts'])
-      queryClient.setQueryData(['posts'], (old) => {
-        console.log(old)
-        return old.map(post => {
-          if(post._id === variables.object._id){
-            if(likes) post.likes = post.likes.filter(like => like.id !== currentUser.id) 
-            else post.likes.unshift(currentUser)
-            return post 
-          } else return post
+      queryClient.setQueryData(['posts'], old => {
+        const newPages = old.pages.map(page => {
+          if(page.posts.includes(variables.object)) {
+            return likes ?
+            {
+              ...page,
+              posts: page.posts.map(post => 
+                post._id === variables.object._id ? 
+                {...post, likes: post.likes?.filter(like => like._id !== currentUser.id)} 
+                : 
+                post
+              )
+            }
+            :
+            {
+              ...page,
+              posts: page.posts.map(post => {
+                if(post._id === variables.object._id) {
+                  return post.likes?.length > 0 ? 
+                  { ...post, likes: [...post.likes, {_id: Math.random(), user: currentUser, post_id: variables.object._id}] }
+                  : 
+                  { ...post, likes: [{_id: Math.random(), user: currentUser, post_id: variables.object._id}] }
+                } else return post
+            })
+            }
+            
+          } else return page
         })
+        return {
+          ...old,
+          pages: newPages
+        }
       })
+      if(location.pathname.includes('profile') && urlParams.id){
+        queryClient.setQueryData([`profile`, `${urlParams.id}`], old => {
+          const newPages = old.pages.map(page => {
+            if(page.posts.includes(variables.object)) {
+              return likes ?
+              {
+                ...page,
+                posts: page.posts.map(post => 
+                  post._id === variables.object._id ? 
+                  {...post, likes: post.likes?.filter(like => like._id !== currentUser.id)} 
+                  : 
+                  post
+                  )
+                }
+                :
+                {
+                  ...page,
+                  posts: page.posts.map(post => {
+                    if(post._id === variables.object._id) {
+                      return post.likes?.length > 0 ? 
+                      { ...post, likes: [...post.likes, {_id: Math.random(), user: currentUser, post_id: variables.object._id}] }
+                      : 
+                      { ...post, likes: [{_id: Math.random(), user: currentUser, post_id: variables.object._id}] }
+                    } else return post
+                  })
+                }
+                
+              } else return page
+            })
+            return {
+              ...old,
+              pages: newPages
+            }
+          })
+        }
       return {oldPosts}
     },
     onSuccess: (data) => {
@@ -136,8 +195,9 @@ const Cards = ({post, date, user, object, currentUser}) => {
     onError: (err, vars, context) => {
      queryClient.setQueryData(['posts'], context.oldPosts)
     },
-    onSettled: () => {
+    onSettled: (data) => {
       queryClient.invalidateQueries(['posts'])
+      queryClient.invalidateQueries(['profile', urlParams.id])
     }
   })
 
