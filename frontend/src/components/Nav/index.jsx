@@ -103,8 +103,8 @@ export const Nav = ({currentUser}) => {
               MattBook
             </Typography>
           </Link>
-          <motion.div layout style={{width: '40px', height: '20px', backgroundColor: 'white', margin: '1rem', borderRadius: '9999px', display: 'flex', justifyContent: switcher === 'dark' ? 'flex-end' : 'flex-start', alignItems: 'center', padding: '.1rem'}} onClick={() => setSwitcher(prevState => prevState === 'dark' ? 'light' : 'dark')}>
-            <motion.span layout style={{height: '16px', width: '16px', backgroundColor: switcher === 'dark' ? '#121212' : '#1976d2', borderRadius: '50%'}}/>
+          <motion.div layout layoutRoot style={{position: 'relative', width: '40px', height: '20px', backgroundColor: 'white', margin: '1rem', borderRadius: '9999px', display: 'flex', justifyContent: switcher === 'dark' ? 'flex-end' : 'flex-start', alignItems: 'center', padding: '.1rem'}} onClick={() => setSwitcher(prevState => prevState === 'dark' ? 'light' : 'dark')}>
+            <motion.span layout style={{height: '16px', width: '16px', backgroundColor: switcher === 'dark' ? '#121212' : '#1976d2', borderRadius: '50%'}} transition={{type: 'spring', stiffness: 700, damping: 25}}/>
           </motion.div>
         </div>
       </AppBar>
