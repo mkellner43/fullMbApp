@@ -13,7 +13,6 @@ const Home = ({currentUser}) => {
   const mainError = useSelector(state => state.home.mainError)
   const dispatch = useDispatch();
   const postsQuery = usePostsQuery();
-
   const handleClose = () => {
     dispatch(removeMainError())
   }

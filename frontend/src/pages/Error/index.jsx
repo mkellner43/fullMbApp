@@ -1,9 +1,21 @@
-//style this Error page up nicely (:
+import './style/style.scss';
+import { Button } from '@mui/material';
+
 const Error = ({error, resetErrorBoundary}) => {
   return (
-    <div>
-      {error.message}
-      <button onClick={resetErrorBoundary}>Reset</button>
+    <div className='error-container'>
+      <h1 className='header'>OOPS</h1>
+      <div className="message">
+        {error.message}
+      </div>
+      <Button 
+        className='btn' 
+        variant={'outlined'} 
+        color='error' 
+        onClick={resetErrorBoundary}
+      >
+        Reset
+      </Button>
     </div>
   )
 }
