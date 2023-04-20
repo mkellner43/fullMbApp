@@ -2,6 +2,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Routes, Route } from 'react-router-dom';
 import { SocketProvider } from './context/SocketProvider';
 import { useSelector } from 'react-redux';
+import Error from './pages/Error';
 import Home from './pages/Home';
 import Nav from './components/Nav';
 import Profile from './pages/Profile';
@@ -11,6 +12,7 @@ import Notifications from './pages/Notifications';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const App = () => {
   const currentUser = useSelector(state => state.login.currentUser)
@@ -48,6 +50,7 @@ const App = () => {
   )
 
   return (
+    <ErrorBoundary FallbackComponent={Error}>
     <SocketProvider value={currentUser?.id}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline/>
@@ -62,6 +65,7 @@ const App = () => {
         </Routes>
       </ThemeProvider>
    </SocketProvider>
+    </ErrorBoundary>
   );
 }
 
@@ -77,5 +81,3 @@ export default App;
 // get working in prod env -- then get working in AWS or another free service? Maybe GCP? 
 
 // add fake data and filter what user can see by friends and set defaults
-// theme button does weird stuff when naving to profile that has not been cached
-// find out why big boy
