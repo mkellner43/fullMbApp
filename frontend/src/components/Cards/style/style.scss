@@ -1,5 +1,5 @@
-@import '../../../styles-base/variables';
-@import '../../../styles-base/mixins';
+@import "../../../styles-base/variables";
+@import "../../../styles-base/mixins";
 
 .post-card {
   @include nice-border;
@@ -18,11 +18,11 @@
       flex-direction: row;
     }
   }
-  
+
   .post-content {
     display: flex;
-    flex-direction: column; 
-       
+    flex-direction: column;
+
     .post-text {
       padding: 1rem;
     }

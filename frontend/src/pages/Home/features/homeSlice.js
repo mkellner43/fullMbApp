@@ -1,20 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const homeSlice = createSlice({
-  name: 'home',
+  name: "home",
   initialState: {
-    mainError: null
+    mainError: null,
   },
   reducers: {
     setMainError: (state, action) => {
-      state.mainError = action.payload
+      state.mainError = action.payload;
     },
     removeMainError: (state) => {
-      state.mainError = null
-    }
-  }
-})
+      state.mainError = null;
+    },
+  },
+});
 
-export const { setMainError, removeMainError } = homeSlice.actions
+export const { setMainError, removeMainError } = homeSlice.actions;
 
-export const homeReducer = homeSlice.reducer
+export const homeReducer = homeSlice.reducer;

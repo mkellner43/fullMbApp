@@ -1,52 +1,57 @@
 import axios from "axios";
 
-export const readAllNotifications = async(notifications=[]) => {
-  if(notifications.length === 0) return
+export const readAllNotifications = async (notifications = []) => {
+  if (notifications.length === 0) return;
   try {
-    const { data } = await axios.post(`users/notifications/read`, {notifications})
-    return data
+    const { data } = await axios.post(`users/notifications/read`, {
+      notifications,
+    });
+    return data;
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 
-export const unreadAllNotifications = async(notifications=[]) => {
-  if(notifications.length === 0) return
+export const unreadAllNotifications = async (notifications = []) => {
+  if (notifications.length === 0) return;
   try {
-    const { data } = await axios.post(`users/notifications/unread`, {notifications})
-    return data
+    const { data } = await axios.post(`users/notifications/unread`, {
+      notifications,
+    });
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const readOne = async(id) => {
+export const readOne = async (id) => {
   try {
-    const { data } = await axios.post(`users/notifications/read/${id}`)
-    return data
+    const { data } = await axios.post(`users/notifications/read/${id}`);
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-
-export const getNotifications = async(cursor) => {
+export const getNotifications = async (cursor) => {
   try {
-    const { data } = await axios.get(`users/notifications?skip=${cursor}&limit=6`)
-    return data
+    const { data } = await axios.get(
+      `users/notifications?skip=${cursor}&limit=6`
+    );
+    return data;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
-export const deleteNotification = async(id) => {
+export const deleteNotification = async (id) => {
   try {
-    const { data } = await axios.delete(`users/notifications/${id}`)
-    return data    
+    const { data } = await axios.delete(`users/notifications/${id}`);
+    return data;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
 // export const deleteNotification = (id) => {
 //   return fetch(`http://localhost:3000/api/v1/users/notifications/${id}`, {
@@ -71,7 +76,7 @@ export const deleteNotification = async(id) => {
 //   })
 // }
 
-// old ewwwwww 
+// old ewwwwww
 
 // export const readAllNotifications = (notifications=[]) => {
 //   if(notifications.length === 0) return
@@ -97,7 +102,6 @@ export const deleteNotification = async(id) => {
 //     return Promise.reject(error)
 //   })
 // }
-
 
 // export const unreadAllNotifications = (notifications=[]) => {
 //   if(notifications.length === 0) return

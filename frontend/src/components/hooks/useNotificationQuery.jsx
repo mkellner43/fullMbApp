@@ -6,19 +6,18 @@ import { useDispatch } from "react-redux";
 const useNotificationQuery = () => {
   const dispatch = useDispatch();
   return useInfiniteQuery({
-    queryKey: ['notifications'],
-    queryFn: async({pageParam=0}) => getNotifications(pageParam),
+    queryKey: ["notifications"],
+    queryFn: async ({ pageParam = 0 }) => getNotifications(pageParam),
     getNextPageParam: (lastPage, pages) => {
-      return lastPage.cursor
+      return lastPage.cursor;
     },
     retry: false,
     onError: (err) => {
-      document.cookie = 'access_token= ; max-age=0'
-      sessionStorage.clear()
-      dispatch(setToken())
-    }
-  })
-}
-  
-export default useNotificationQuery
- 
+      document.cookie = "access_token= ; max-age=0";
+      sessionStorage.clear();
+      dispatch(setToken());
+    },
+  });
+};
+
+export default useNotificationQuery;

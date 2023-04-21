@@ -1,5 +1,5 @@
-@import '../../../styles-base/mixins';
-@import '../../../styles-base/variables';
+@import "../../../styles-base/mixins";
+@import "../../../styles-base/variables";
 
 .friend-container {
   @include center;
@@ -10,8 +10,7 @@
   height: 100vh;
   padding-top: 6rem;
 
-
-  .friend-section{ 
+  .friend-section {
     @include center;
     width: 30vw;
     min-width: 350px;

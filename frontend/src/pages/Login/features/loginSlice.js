@@ -1,44 +1,53 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const loginSlice = createSlice({
-  name: 'login',
+  name: "login",
   initialState: {
-      username: '',
-      password: '',
-      usernameError: null,
-      passwordError: null,
-      mainError: null,
-      token: document.cookie.split('=')[1], 
-      currentUser: JSON.parse(sessionStorage.getItem('user'))
+    username: "",
+    password: "",
+    usernameError: null,
+    passwordError: null,
+    mainError: null,
+    token: document.cookie.split("=")[1],
+    currentUser: JSON.parse(sessionStorage.getItem("user")),
   },
   reducers: {
     updateUsername: (state, action) => {
-      state.username = action.payload
+      state.username = action.payload;
     },
     updatePassword: (state, action) => {
-      state.password = action.payload
+      state.password = action.payload;
     },
     setUsernameError: (state, action) => {
-      state.usernameError = action.payload
+      state.usernameError = action.payload;
     },
     setPasswordError: (state, action) => {
-      state.passwordError = action.payload
+      state.passwordError = action.payload;
     },
     setMainError: (state, action) => {
-      state.mainError= action.payload
+      state.mainError = action.payload;
     },
     setToken: (state, action) => {
-      state.token = action.payload 
+      state.token = action.payload;
     },
     setCurrentUser: (state, action) => {
-      state.currentUser = action.payload
+      state.currentUser = action.payload;
     },
     updateCurrentUserAvatar: (state, action) => {
-      state.currentUser = {...state.currentUser, avatar: action.payload}
-    }
-  }
-})
+      state.currentUser = { ...state.currentUser, avatar: action.payload };
+    },
+  },
+});
 
-export const { updateUsername, updatePassword, setPasswordError, setUsernameError, setMainError, setToken, setCurrentUser, logOut } = loginSlice.actions;
+export const {
+  updateUsername,
+  updatePassword,
+  setPasswordError,
+  setUsernameError,
+  setMainError,
+  setToken,
+  setCurrentUser,
+  logOut,
+} = loginSlice.actions;
 
 export const loginReducer = loginSlice.reducer;

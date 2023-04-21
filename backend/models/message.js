@@ -1,23 +1,23 @@
-const { ObjectId } = require('mongodb')
-const mongoose = require('mongoose')
+const { ObjectId } = require("mongodb");
+const mongoose = require("mongoose");
 
 const MessageSchema = new mongoose.Schema({
   thread_id: {
     type: ObjectId,
-    required: true
+    required: true,
   },
   message: {
     type: String,
-    required: true
-  }, 
+    required: true,
+  },
   sender: {
-    type: ObjectId, 
-    ref: 'User',
-  }, 
+    type: ObjectId,
+    ref: "User",
+  },
   date: {
-    type: Date, 
-    default: Date.now
-  }
-})
+    type: Date,
+    default: Date.now,
+  },
+});
 
-module.exports = mongoose.model('Message', MessageSchema)
+module.exports = mongoose.model("Message", MessageSchema);

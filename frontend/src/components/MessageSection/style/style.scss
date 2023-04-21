@@ -6,7 +6,7 @@
   align-self: flex-start;
 }
 
-.circleLoaderContainer { 
+.circleLoaderContainer {
   position: absolute;
   top: 50%;
   text-align: center;
@@ -29,7 +29,7 @@
     align-items: center;
     justify-content: space-evenly;
     margin-left: 0.5rem;
-    
+
     .dot1 {
       height: 0.5rem;
       width: 0.5rem;
@@ -37,7 +37,7 @@
       background-color: #fff;
       animation: fade infinite 2s 0.5s;
     }
-    
+
     .dot2 {
       height: 0.5rem;
       width: 0.5rem;
@@ -45,7 +45,7 @@
       background-color: #fff;
       animation: fade infinite 2s 1s;
     }
-    
+
     .dot3 {
       height: 0.5rem;
       width: 0.5rem;
@@ -54,7 +54,7 @@
       animation: fade infinite 2s 1.5s;
     }
   }
-  
+
   @keyframes fade {
     0% {
       opacity: 1;

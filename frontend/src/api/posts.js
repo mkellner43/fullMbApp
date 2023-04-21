@@ -1,59 +1,62 @@
 import axios from "axios";
 
-export const getPosts = async(pageParam) => {
+export const getPosts = async (pageParam) => {
   try {
-    const { data } = await axios.get(`posts?page=${pageParam}`)
-    return data
+    const { data } = await axios.get(`posts?page=${pageParam}`);
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const sendPost = async(object) => {
+export const sendPost = async (object) => {
   try {
-    const { data } = await axios.post(`posts`, object)
-    return data
+    const { data } = await axios.post(`posts`, object);
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const deletePost = async(id) => {
+export const deletePost = async (id) => {
   try {
-    const { data } = await axios.delete(`posts/${id}`)
-    return data
+    const { data } = await axios.delete(`posts/${id}`);
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const postLike = async({object}) => {
+export const postLike = async ({ object }) => {
   try {
-    const { data } = await axios.post(`posts/like/${object._id}`)
-    return data
+    const { data } = await axios.post(`posts/like/${object._id}`);
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const postComment = async({object, comment}) => {
+export const postComment = async ({ object, comment }) => {
   try {
-    const { data } = await axios.post(`comments/${object._id}`, {comment_body: comment})
-    return data
+    const { data } = await axios.post(`comments/${object._id}`, {
+      comment_body: comment,
+    });
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
+};
 
-export const getPostComments = async(id, limit=10, skip=0) => {
+export const getPostComments = async (id, limit = 10, skip = 0) => {
   try {
-    const { data } = await axios.get(`comments/${id}/?limit=${limit}&skip=${skip}`)
-    return data
+    const { data } = await axios.get(
+      `comments/${id}/?limit=${limit}&skip=${skip}`
+    );
+    return data;
   } catch (error) {
-    return error    
+    return error;
   }
-}
-
+};
 
 //look into Axios because apparently fetch is 🗑️
 
@@ -145,7 +148,6 @@ export const getPostComments = async(id, limit=10, skip=0) => {
 //     return Promise.reject(error)
 //   })
 // };
-
 
 // export const postComment = ({object, comment}) => {
 //   return fetch(`http://localhost:3000/api/v1/comments/${object._id}`, {
