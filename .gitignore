@@ -1,3 +1,9 @@
 /.DS_Store
 docker-compose.yml
 node_modules
+comment.js
+package.json
+package-lock.json
+post.js
+seed.js
+user.js
