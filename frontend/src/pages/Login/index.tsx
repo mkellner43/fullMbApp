@@ -13,19 +13,43 @@ import {
   setToken,
 } from "./features/loginSlice";
 import { setNotification } from "../Signup/features/signUpSlice";
+import React from "react";
+
+interface state {
+  login: {
+    username: string;
+    password: string;
+    usernameError: string;
+    passwordError: string;
+    mainError: string;
+  };
+  signup: {
+    notification: string;
+  };
+}
+
+interface submitCredentials {
+  credentials: string;
+  navigate: any;
+}
 
 const Login = () => {
   const navigate = useNavigate();
-  const username = useSelector((state) => state.login.username);
-  const password = useSelector((state) => state.login.password);
-  const usernameError = useSelector((state) => state.login.usernameError);
-  const passwordError = useSelector((state) => state.login.passwordError);
-  const mainError = useSelector((state) => state.login.mainError);
-  const userCreated = useSelector((state) => state.signup.notification);
+  const username = useSelector((state: state) => state.login.username);
+  const password = useSelector((state: state) => state.login.password);
+  const usernameError = useSelector(
+    (state: state) => state.login.usernameError
+  );
+  const passwordError = useSelector(
+    (state: state) => state.login.passwordError
+  );
+  const mainError = useSelector((state: state) => state.login.mainError);
+  const userCreated = useSelector((state: state) => state.signup.notification);
   const dispatch = useDispatch();
 
   const submitLogin = useMutation({
-    mutationFn: ({ credentials, navigate }) => login(credentials, navigate),
+    mutationFn: ({ credentials, navigate }: submitCredentials) =>
+      login(credentials, navigate),
     onSuccess: (data) => {
       console.log("success??");
       dispatch(setCurrentUser(data));
@@ -45,10 +69,10 @@ const Login = () => {
 
   const handleClose = () => {
     dispatch(setMainError(null));
-    dispatch(setNotification());
+    dispatch(setNotification(null));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     document.cookie = "access_token= ; max-age=0";
     !username
@@ -58,7 +82,7 @@ const Login = () => {
       ? dispatch(setPasswordError("Password is required"))
       : dispatch(setPasswordError(null));
     if (username && password) {
-      const credentials = JSON.stringify({
+      const credentials: string = JSON.stringify({
         username: username,
         password: password,
       });
