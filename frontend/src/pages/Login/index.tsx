@@ -15,7 +15,7 @@ import {
 import { setNotification } from "../Signup/features/signUpSlice";
 import React from "react";
 
-interface state {
+interface State {
   login: {
     username: string;
     password: string;
@@ -35,16 +35,16 @@ interface submitCredentials {
 
 const Login = () => {
   const navigate = useNavigate();
-  const username = useSelector((state: state) => state.login.username);
-  const password = useSelector((state: state) => state.login.password);
+  const username = useSelector((state: State) => state.login.username);
+  const password = useSelector((state: State) => state.login.password);
   const usernameError = useSelector(
-    (state: state) => state.login.usernameError
+    (state: State) => state.login.usernameError
   );
   const passwordError = useSelector(
-    (state: state) => state.login.passwordError
+    (state: State) => state.login.passwordError
   );
-  const mainError = useSelector((state: state) => state.login.mainError);
-  const userCreated = useSelector((state: state) => state.signup.notification);
+  const mainError = useSelector((state: State) => state.login.mainError);
+  const userCreated = useSelector((state: State) => state.signup.notification);
   const dispatch = useDispatch();
 
   const submitLogin = useMutation({
