@@ -8,7 +8,7 @@ import "./styles-base/index.scss";
 import App from "./App";
 import store from "./store";
 import axios from "axios";
-axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.headers = { "Content-Type": "application/json" };
 axios.defaults.withCredentials = true;
 
