@@ -1,31 +1,30 @@
-@import '@fontsource/roboto/300.css';
-@import '@fontsource/roboto/400.css';
-@import '@fontsource/roboto/500.css';
-@import '@fontsource/roboto/700.css';
-@import './mixins';
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
+@import "./mixins";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 .center-modal {
   @include center-modal;
- }
+}
 
- .center {
+.center {
   @include center;
- }
+}
 
- .post-avatar {
+.post-avatar {
   @include center;
   width: 65%;
   flex-direction: row;
   justify-content: flex-start;
-  overflow: 'hidden';
+  overflow: "hidden";
 }
 
 .flex1 {
-  flex: 1
+  flex: 1;
 }
 
 .small-card {
@@ -42,9 +41,9 @@
 
 .text-ellipsis-flex {
   font-size: 1rem;
-  padding: 0rem; 
-  margin: 0px; 
-  font-weight: 400; 
+  padding: 0rem;
+  margin: 0px;
+  font-weight: 400;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -62,6 +61,7 @@
   width: 100%;
   padding: 0rem 1rem;
   margin-bottom: 4rem;
+  max-width: none;
 }
 
 .page-width {

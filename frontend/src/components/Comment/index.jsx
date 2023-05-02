@@ -39,7 +39,7 @@ const Comment = ({ comment }) => {
           <Typography color="text.secondary" variant="caption" noWrap>
             {UsFormatter.format(new Date(comment.date))}
           </Typography>
-          <Chip label={comment.comment_body} color="primary"></Chip>
+          <div className="p-3 m-1 bg-blue-500 rounded">{comment.comment_body}</div>
         </div>
       </div>
     </div>
